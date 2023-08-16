@@ -1,0 +1,74 @@
+function [u] = nonlinear_disturbance_observer_controller(x)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Joint Velocities
+dq_1 = x(1);
+dq_2 = x(2);
+dq_3 = x(3);
+dq_4 = x(4);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Positions Error
+q_tilde_1 = x(5);
+q_tilde_2 = x(6);
+q_tilde_3 = x(7);
+q_tilde_4 = x(8);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Velocities Error
+dq_tilde_1 = x(9);
+dq_tilde_2 = x(10);
+dq_tilde_3 = x(11);
+dq_tilde_4 = x(12);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Desired Positions Accelerates
+ddqd_1 = x(13);
+ddqd_2 = x(14);
+ddqd_3 = x(15);
+ddqd_4 = x(16);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Robot Parameters
+m_1 = x(17);
+m_2 = x(18);
+m_3 = x(19);
+m_4 = x(20);
+I_1 = x(21);
+I_2 = x(22);
+I_3 = x(23);
+I_4 = x(24);
+a_1 = x(25);
+a_2 = x(26);
+x_1 = x(27);
+x_2 = x(28);
+
+k_v = x(29);
+k_p = x(30);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Joint Positions
+q_1 = x(31);
+q_2 = x(32);
+q_3 = x(33);
+q_4 = x(34);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+q = [q_1; q_2; q_3; q_4];
+dq = [dq_1; dq_2; dq_3; dq_4];
+q_tilde = [q_tilde_1; q_tilde_2; q_tilde_3; q_tilde_4];
+dq_tilde = [dq_tilde_1; dq_tilde_2; dq_tilde_3; dq_tilde_4];
+ddqd = [ddqd_1; ddqd_2; ddqd_3; ddqd_4];
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+robot_parameters = [];
+robot_parameters(1) = m_1;
+robot_parameters(2) = m_2;
+robot_parameters(3) = m_3;
+robot_parameters(4) = m_4;
+robot_parameters(5) = I_1;
+robot_parameters(6) = I_2;
+robot_parameters(7) = I_3;
+robot_parameters(8) = I_4;
+robot_parameters(9) = a_1;
+robot_parameters(10) = a_2;
+robot_parameters(11) = x_1;
+robot_parameters(12) = x_2;
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+[M,C,G] = dynamic_terms(q,dq,robot_parameters);
+K_V = k_v*eye(4,4);
+K_P = k_p*eye(4,4);
+u = M*(ddqd+K_V*dq_tilde+K_P*(q_tilde))+C*q_tilde+G;
+end
